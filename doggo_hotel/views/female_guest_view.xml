@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_doggo_hotel_female_guest" model="ir.actions.act_window">
+        <field name="name">Female Guests</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">doggo.hotel.guest</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'default_gender' : 'female'}</field>
+        <field name="domain">[('gender','=','female')]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No female guest for now. Create one.
+            </p>
+        </field>
+    </record>
+
+    <menuitem name="Female Guests"
+              id="menu_female_guests"
+              parent="menu_guest_master"
+              action="action_doggo_hotel_female_guest"
+              sequence="2"/>
+</odoo>

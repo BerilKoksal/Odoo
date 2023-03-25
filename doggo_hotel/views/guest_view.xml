@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_doggo_hotel_guest_tree" model="ir.ui.view">
+        <field name="name">doggo.hotel.guest.tree</field>
+        <field name="model">doggo.hotel.guest</field>
+        <field name="arch" type="xml">
+            <tree export_xlsx="0">
+                <field name="name"/>
+                <field name="age"/>
+                <field name="gender"/>
+                <field name="breed"/>
+                <field name='date_of_birth'/>
+                <field name="parent"/>
+                <field name="guest_no"/>
+                <field name="tag_ids"/>
+                <field name="reservation_count" sum="Total Reservations"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_doggo_hotel_guest_form" model="ir.ui.view">
+        <field name="name">doggo.hotel.guest.form</field>
+        <field name="model">doggo.hotel.guest</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                         <button class="oe_stat_button" type="object" name="action_view_reservation" icon="fa-star">
+                        <field string="Reservation" name="reservation_count" widget="statinfo"/>
+                    </button>
+                    </div>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h2>
+                            <label for="name" string="Name" class="oe_edit_only"/>
+                            <field name="name"/>
+                        </h2>
+                    </div>
+
+
+                    <group>
+                        <group>
+                            <field name="tag_ids"
+                                   widget="many2many_tags"
+                                   options="{'color_field': 'color'}"
+                                   attrs="{'invisible':[('age','&lt;',1)]}"/>
+
+                            <field name="age"/>
+                            <field name='date_of_birth'/>
+                        </group>
+                        <group>
+                            <field name="gender"/>
+                            <field name="breed"/>
+                            <field name="active" invisible="1"/>
+                            <field name="parent"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_doggo_hotel_guest_search" model="ir.ui.view">
+        <field name="name">doggo.hotel.guest.search</field>
+        <field name="model">doggo.hotel.guest</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="age"/>
+                <field name="gender"/>
+                <field name="breed"/>
+                <filter name="filter_male" string="Male" domain="[('gender','=','male')]"/>
+                <filter name="filter_female" string="female" domain="[('gender','=','female')]"/>
+                <!--   <separator/>
+                   <filter name="filter_puppy" string="Puppies" domain="[('age','&lt;=','1')]"/>-->
+                <separator/>
+                <filter name="filter_archived" string="Archived" domain="[('active','=',False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="groupby_breed" string="Breed" domain="[]" context="{'group_by': 'breed'}"/>
+                </group>
+                <searchpanel>
+                    <field name="gender" icon="fa-linux" enable_counters="1"/>
+                </searchpanel>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_doggo_hotel_guest" model="ir.actions.act_window">
+        <field name="name">Guests</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">doggo.hotel.guest</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="context">{ }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No guest for now. Create one.
+            </p>
+        </field>
+    </record>
+
+    <menuitem name="Guests"
+              id="menu_guests"
+              parent="menu_guest_master"
+              action="action_doggo_hotel_guest"
+              sequence="0"/>
+</odoo>

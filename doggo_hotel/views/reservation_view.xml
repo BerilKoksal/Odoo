@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_server_mark_as_done" model="ir.actions.server">
+        <field name="name">Mark As Done</field>
+        <field name="type">ir.actions.server</field>
+        <field name="model_id" ref="model_doggo_hotel_reservation"/>
+        <field name="binding_model_id" ref="model_doggo_hotel_reservation"/>
+        <field name="state">code</field>
+        <field name="code">
+            for rec in records:
+            if rec.state=='in_progress':
+                rec.action_done()
+        </field>
+    </record>
+
+    <record id="view_doggo_hotel_reservation_activity" model="ir.ui.view">
+        <field name="name">doggo.hotel.reservation.activity</field>
+        <field name="model">doggo.hotel.reservation</field>
+        <field name="arch" type="xml">
+            <activity string="Reservations">
+                <field name="doggo_id"/>
+                <templates>
+                    <div t-name="activity-box">
+                        <img t-att-src="activity_image('doggo.hotel.guest', 'image', record.doggo_id.raw_value)"
+                             t-att-title="record.doggo_id.value" t-att-alt="record.doggo_id.value"/>
+                        <div>
+                            <field name="sitter_id"/>
+                        </div>
+
+                    </div>
+                </templates>
+            </activity>
+        </field>
+    </record>
+
+    <record id="view_doggo_hotel_reservation_calendar" model="ir.ui.view">
+        <field name="name">doggo.hotel.reservation.calendar</field>
+        <field name="model">doggo.hotel.reservation</field>
+        <field name="arch" type="xml">
+            <calendar string="Reservations" mode="month" date_start="reservation_date" date_delay="duration" color="state" event_open_popup="True">
+                <field name="doggo_id"/>
+                <field name="state" invisible="1" filters="1"/>
+            </calendar>
+         </field>
+     </record>
+
+    <record id="view_doggo_hotel_reservation_tree" model="ir.ui.view">
+        <field name="name">doggo.hotel.reservation.tree</field>
+        <field name="model">doggo.hotel.reservation</field>
+        <field name="arch" type="xml">
+            <tree decoration-success="state =='done'" decoration-danger="state=='cancel'" sample="1">
+                <header>
+                    <button name="action_in_progress" string="In Progress" type="object"
+                            class="oe_highlight"/>
+                </header>
+                <field name="doggo_id"/>
+                <field name="reservation_date"/>
+                <field name="reservation_time" optional="hide"/>
+                <field name="gender"/>
+                <field name="sitter_id" widget="many2one_avatar_user"/>
+                <field name="parent" optional="show"/>
+                <field name="activity_ids" widget="list_activity" optional="show"/>
+                <field name="state" widget="badge" decoration-success="state =='done'"
+                       decoration-info="state in ('draft','in_progress')"/>
+                <button name="action_done" type="object"
+                        class="fa fa-check btn-success"
+                        attrs="{'invisible':[('state','!=','in_progress')]}"/>
+                <button name="%(doggo_hotel.action_cancel_reservation)d"
+                        type="action" class="fa fa-times btn-danger"
+                        attrs="{'invisible':[('state','not in',('draft','in_progress'))]}"
+                        context="{'default_reservation_id':active_id}"/>
+                <groupby name="doggo_id">
+                    <button name="edit" type="edit" string="Edit"/>
+                </groupby>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_doggo_hotel_reservation_form" model="ir.ui.view">
+        <field name="name">doggo.hotel.reservation.form</field>
+        <field name="model">doggo.hotel.reservation</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_in_progress" string="In Progress" type="object" states="draft"
+                            class="oe_highlight"/>
+                    <button name="action_done" string="Mark as Done" type="object" states="in_progress"
+                            class="oe_highlight"/>
+                    <button name="%(doggo_hotel.action_cancel_reservation)d" string="Cancel" type="action"
+                            states="draft,in_progress" context="{'default_reservation_id':active_id}"/>
+                    <button name="action_draft" string="Set Back to Draft" type="object" states="done,cancel"/>
+                     <button name="action_share_whatsapp" string="Share on Whatsapp" type="object" icon="fa-whatsapp"/>
+                    <field name="state" widget="statusbar" nolabel="1" options="{'clickable':1}"
+                           statusbar_visible="draft,in_progress,done"/>
+                </header>
+                <sheet>
+                    <div>
+                        <h1>
+                            <field name="priority" widget="priority"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="doggo_id"/>
+                            <field name="parent" readonly="1" force_save="1"/>
+                            <field name="reservation_date" default_focus="1"/>
+                            <field name="reference_record"/>
+                            <field name="duration"/>
+                        </group>
+                        <group>
+                            <field name="hide_price"/>
+                            <field name="sitter_id" widget="many2one_avatar_user"/>
+                            <field name="reservation_time"/>
+                            <field name="gender"/>
+                            <button name="test_button" string="Test Button" type="object" class="oe_highlight"
+                                    confirm="Message will be printed in the log"/>
+
+                        </group>
+
+                    </group>
+                    <notebook>
+                        <page string="Sayfa 1" name="sayfa1">
+                            <group>
+                                <field name="content" placeholder="Write smth." options="{'collaborative':True}">
+
+                                </field>
+                            </group>
+                        </page>
+                        <page string="Sayfa 2" name="sayfa2">
+                            <field name="food_ids">
+                                <tree editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="price" attrs="{
+                                            'column_invisible': [('parent.hide_price', '=', True)]}"/>
+                                    <field name="quantity"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <field name="product_id"/>
+                                        <field name="price" attrs="{
+                                            'column_invisible': [('parent.hide_price', '=', True)]}"/>/>
+                                        <field name="quantity"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_doggo_hotel_reservation_search" model="ir.ui.view">
+        <field name="name">doggo.hotel.reservation.search</field>
+        <field name="model">doggo.hotel.reservation</field>
+        <field name="arch" type="xml">
+            <search>
+
+            </search>
+        </field>
+    </record>
+
+    <record id="action_doggo_hotel_reservation" model="ir.actions.act_window">
+        <field name="name">Reservation</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">doggo.hotel.reservation</field>
+        <field name="view_mode">tree,form,activity,calendar</field>
+        <field name="context">{ }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No reservation for now. Create one.
+            </p>
+        </field>
+    </record>
+
+    <menuitem name="Reservation"
+              id="menu_reservation"
+              parent="menu_reservation_master"
+              action="action_doggo_hotel_reservation"
+              sequence="3"/>
+</odoo>
+

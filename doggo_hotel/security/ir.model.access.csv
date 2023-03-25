@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+doggo_hotel.access_doggo.hotel.guest,access_doggo_hotel_guest,doggo_hotel.model_doggo_hotel_guest,base.group_user,1,1,1,1
+doggo_hotel.access_doggo.hotel.reservation,access_doggo_hotel_reservation,doggo_hotel.model_doggo_hotel_reservation,base.group_user,1,1,1,1
+doggo_hotel.access_reservation.food.lines,access_reservation_food_lines,doggo_hotel.model_reservation_food_lines,base.group_user,1,1,1,1
+access.doggo.tag,access_doggo.tag,doggo_hotel.model_doggo_tag,base.group_user,1,1,1,1
+access.cancel.reservation.wizard,access_cancel_reservation_wizard,doggo_hotel.model_cancel_reservation_wizard,base.group_user,1,1,1,1
+
